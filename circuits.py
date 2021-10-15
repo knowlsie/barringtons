@@ -65,7 +65,7 @@ class Gate(object):
         if not self.__visited:
             subprograms = [g.circuit_to_alpha_program(recurse=True) for g in self.in_gates]
             total += 1
-            print(total, self.name)
+            # print(total, self.name)
             self.__visited = True
             self.__memo = self.gate_to_alpha_program(subprograms)
 
@@ -253,9 +253,14 @@ def make_maj5(indices=None):
     return maj5(inps)
 
 def make_majk(k, indices=None):
+    # makes majk, but not using the correct construction for Barrington's Theorem.
+    # it turns out the constants on that construction are way too high, at least
+    # for small numbers. this uses a much simpler method which grows polynomially,
+    # but has much better constants, so works for small numbers here.
     if not indices:
         indices = list(range(k))
     
+    # # some fun old code for maj7. it's too deep, so is VERY slow.
     # maj_51 = make_maj5((indices[0], indices[1], indices[2], indices[3], indices[4]))
     # maj_52 = make_maj5((indices[0], indices[1], indices[4], indices[5], indices[6]))
     # maj_53 = make_maj5((indices[0], indices[2], indices[3], indices[5], indices[5]))
@@ -264,6 +269,7 @@ def make_majk(k, indices=None):
 
     # maj_final = maj5((maj_51, maj_52, maj_53, maj_54, maj_55))
     # return maj_final
+
     to_or = []
     for c in combinations(indices, (k+1) // 2):
         to_and = [Input(ci) for ci in c]
